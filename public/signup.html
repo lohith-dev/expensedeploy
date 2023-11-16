@@ -95,7 +95,7 @@
                                  const itemId = listItem.getAttribute('data-id');
                                  const elementToRemove = document.querySelector(`li[data-id="${itemId}"]`);
 
-                                axios.delete(`http://localhost:8000/expenseData/${itemId}`).then((res)=>{
+                                axios.delete(`http://54.152.214.195:8000/expenseData/${itemId}`).then((res)=>{
                                     if(res.status==200){
                                         elementToRemove.remove();
                                     }
@@ -125,7 +125,7 @@
                         const listItem = e.target.closest('li');
                         const itemId = listItem.getAttribute('data-id');
                         let edit=null;
-                        axios.get('http://localhost:8000/expenseData').then((res)=>{
+                        axios.get('http://54.152.214.195:8000/expenseData').then((res)=>{
                             edit=res.data.data.find(data=>data.id==itemId);
                             console.log(edit);
                              populateInputFields(edit);
@@ -173,7 +173,7 @@ function showError(errorMessage) {
             }else{
                
                 try{
-                   let {data}= await axios.post('http://localhost:8000/auth/signup',loginData);
+                   let {data}= await axios.post('http://54.152.214.195:8000/auth/signup',loginData);
                 //    console.log(data);
                 //     if(data.status===409){
                 //          showError(data.message)
@@ -217,7 +217,7 @@ function showError(errorMessage) {
           
             // if(editItemId){
 
-            //     axios.put(`http://localhost:8000/expenseData`,newExpense).then((res)=>{
+            //     axios.put(`http://54.152.214.195:8000/expenseData`,newExpense).then((res)=>{
 
             //         if(res.status==200){
             //             edititemItem(editItemId,newExpense);
@@ -229,7 +229,7 @@ function showError(errorMessage) {
             //     })
             // }else{
                 
-            //     axios.post('http://localhost:8000/expenseData',newExpense).then((res)=>{
+            //     axios.post('http://54.152.214.195:8000/expenseData',newExpense).then((res)=>{
             //         console.log(res);
             //     if(res){
 
