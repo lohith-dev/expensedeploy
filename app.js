@@ -37,6 +37,11 @@ app.use('/expense', expenseRouter);
 app.use('/purchase', purchaseRouter);
 app.use('/leadboard', leadboardRouter);
 
+app.use((req,res)=>{
+    console.log("reqqqq");
+    res.sendFile(path.join(__dirname,`public${req.url}`))
+})
+
 
 app.use(errorController.get404);
 // {force:true}

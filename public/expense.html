@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.min.js"></script>
+  <!-- Option 1: Include in HTML -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+      <style>
+            #formcomp {
+                display: flex;
+                justify-content: center; 
+              
+            }
+            .logot{
+                margin-right: 20px;
+                /* width: 250px; */
+                display: flex;
+                justify-content: space-between;
+            }
+            #header{
+                text-align: center;
+            }
+            #rzp-button1{
+                display: none;
+            }
+            #leaderboardDiv{
+             
+            }
+            .leadhead{
+                text-align: center;
+            }
+            #leaderboardDiv li{
+                padding: 5px;
+                border-bottom: 1px solid white;
+                color: white;
+            }
+            #premumuser{
+                display: none;
+            }
+            #user{
+                margin-top: 20px;
+            }
+            .preuser{
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                margin-bottom: 20px;
+            }
+            h1{
+                color: orange;
+                font-family: Arial, Helvetica, sans-serif;
+                font-weight: bold;
+            }
+            #sub-button{
+                margin-top: 15px;
+                border-radius: 5px;
+                background-color: orange;
+                padding: 8px;
+               
+            }
+            .pagin{
+                    /* margin: 0 auto; */
+                display: flex;
+                /* width: 132px; */
+                justify-content: end;
+            }
+            .rightBtn{
+                margin-left: 10px;
+                font-size: 33px;
+                cursor: pointer;
+            }
+            .leftBtn{
+                margin-left: 10px;
+                font-size: 33px;
+                cursor: pointer;
+            }
+            .nbar{
+                align-items: center;
+            }
+            .front{
+                display: flex;
+                padding: 30px;
+                justify-content: space-between;
+            }
+            #leaderboard{
+                margin-left: 10px;
+                display: none;
+            }
+            .leadboardInner{
+                margin: 20px;
+                display: flex;
+                /* background-color: white; */
+                flex-direction: column;
+            }
+            #eform{
+                padding: 40px;
+               display: flex;
+               flex-direction: column;
+                width: 450px;
+                border: 1px solid orange;
+            }
+            .profilebox{
+                width: 400px;
+                background-color: aqua;
+            }
+            .leadbox{
+                width: 400px; 
+                overflow-y: scroll;
+                background-color: cadetblue; 
+            }
+            .profileboxInner{
+               padding: 20px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+            .current-page-display{
+                margin-top: 17px;
+                margin-left: 10px;
+            }
+            .tpages{
+                margin-top: 16px;
+                margin-left: 10px;
+            }
+            .itemsPerpage{
+                width: 70px;
+            }
+            #time{
+                display: flex;
+                margin-top: 8px;
+                justify-content: space-between;
+            }
+            label{
+                color: black;
+            }
+       </style>
+    </head>
+<body>
+    <script>
+
+
+var addIteme=(resData)=>{
+
+
+const parentDiv = document.getElementById('parentDiv');
+                   
+
+    const childParagraph = document.createElement('li');
+    childParagraph.setAttribute('data-id', resData.id);
+
+    childParagraph.textContent =  `${resData.expense}-${resData.description}-${resData.category}`;
+    parentDiv.appendChild(childParagraph);
+    var deleteBtn = document.createElement('button');
+    deleteBtn.className  = 'btn btn-danger btn-sm float-right delete';
+    deleteBtn.appendChild(document.createTextNode('Delete'));
+
+    var editBtn = document.createElement('button');
+    editBtn.className  = 'btn btn-primary btn-sm float-right edit';
+    editBtn.appendChild(document.createTextNode('Edit'));
+
+    childParagraph.appendChild(editBtn);
+
+    childParagraph.appendChild(deleteBtn);
+
+}
+
+
+var edititemItem=(itemId,data)=>{
+
+    const tobeEdited = document.querySelector(`li[data-id="${itemId}"]`);
+   
+    tobeEdited.textContent = `${data.expense}-${data.description}-${data.category}`;
+    // elementToRemove.remove();
+    var deleteBtn = document.createElement('button');
+    deleteBtn.className  = 'btn btn-danger btn-sm float-right delete';
+    deleteBtn.appendChild(document.createTextNode('Delete'));
+
+    var editBtn = document.createElement('button');
+    editBtn.className  = 'btn btn-primary btn-sm float-right edit';
+    editBtn.appendChild(document.createTextNode('Edit'));
+
+    tobeEdited.appendChild(editBtn);
+
+    tobeEdited.appendChild(deleteBtn);
+}
+
+function parseJwt (token) {
+                var base64Url = token.split('.')[1];
+                var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                }).join(''));
+
+                return JSON.parse(jsonPayload);
+            }
+
+            async function showLeadboard(){
+                const token = JSON.parse(localStorage.getItem('token'));
+                    try{
+
+                        const {data} = await axios.get('http://localhost:8000/leadboard',{headers:{"Authorization":token}});
+                        const parentDiv = document.getElementById('leaderboardDiv');
+                        parentDiv.innerHTML = '';
+                        
+                            if(data){
+                            data.forEach((expense, index) => {
+                            const parentDiv = document.getElementById('leaderboardDiv');
+                            const childParagraph = document.createElement('li');
+                     
+                            // childParagraph.setAttribute('data-id', expense.id);
+
+                            childParagraph.textContent = `${expense.name} Expenses- \u20B9${expense.totalExpense}`;
+                            parentDiv.appendChild(childParagraph);
+                            // var deleteBtn = document.createElement('button');
+                            // deleteBtn.className  = 'btn btn-danger btn-sm float-right delete';
+                            // deleteBtn.appendChild(document.createTextNode('Delete'));
+
+                            // var editBtn = document.createElement('button');
+                            // editBtn.className = 'btn btn-primary btn-sm edit';
+                            // editBtn.appendChild(document.createTextNode('Edit'));
+
+                            // childParagraph.appendChild(editBtn);
+                            // childParagraph.appendChild(deleteBtn);
+                        });
+
+                            }
+                    }catch(err){
+
+                        console.log(err);
+
+                    }
+                    
+                }
+     
+
+
+    function renderPagination(totalPages) {
+
+            const pagination = document.getElementById('pagination');
+            pagination.innerHTML = '';
+         
+            // Left arrow (previous page)
+            const prevButton = document.createElement('li');
+            prevButton.textContent = '«';
+            prevButton.className ="leftBtn"
+            prevButton.addEventListener('click', () => onPageClick(currentPage - 1));
+            pagination.appendChild(prevButton);
+
+            // Display current page
+            const currentPageDisplay = document.createElement('li');
+            currentPageDisplay.textContent = currentPage;
+            currentPageDisplay.classList.add('current-page-display');
+            pagination.appendChild(currentPageDisplay);
+
+            // Right arrow (next page)
+            const nextButton = document.createElement('li');
+            nextButton.textContent = '»';
+            nextButton.className ="rightBtn"
+            if((totalPages-currentPage)!==0 && (totalPages-currentPage)>-1){
+                nextButton.addEventListener('click', () => onPageClick(currentPage + 1));
+            }
+            pagination.appendChild(nextButton);
+
+            // Display total pages
+            const totalPagesDisplay = document.createElement('li');
+            totalPagesDisplay.textContent = `of ${totalPages}`;
+            totalPagesDisplay.className ="tpages"
+            pagination.appendChild(totalPagesDisplay);
+    }
+
+
+        async function renderCandyItems(page,itemsPerpage) {
+                console.log(itemsPerpage);
+                    let candyItems;
+                    const token =JSON.parse(localStorage.getItem('token'));
+                        try{
+                            const {data}=await axios.get(`http://localhost:8000/expense?page=${page}&itemsPerPage=${itemsPerpage}`,{headers:{"Authorization":token}});
+                            console.log(data.data);
+                            candyItems= data.data;
+                            currentPage = page;
+                            renderPagination(data.totalPages);
+
+                        }catch(err){
+                            console.log(err);
+                        }
+                            
+
+                    const tableBody = document.querySelector('.candies-table tbody');
+
+                    // Clear the table before re-rendering to avoid duplicating items
+                    tableBody.innerHTML = '';
+
+                    // Loop through the array and create table rows for each candy item
+                    candyItems.forEach(item => {
+                    const row = document.createElement('tr');
+
+                    row.innerHTML = `
+                    <th scope="row">${item.id}</th>
+                    <td>${item.category}</td>
+                    <td>${item.description}</td>
+                    <td>$${item.expense}</td>
+                    <td>${item.createdAt}</td>
+                    `;
+
+                    tableBody.appendChild(row);
+                });
+        }
+
+function onPageClick(page) {
+    if (page < 1) {
+      page = 1;
+    }
+    const itemPage=document.getElementById('itemsPerPageSelect').value;
+    console.log(itemPage);
+    renderCandyItems(page,itemPage)
+    //   .then(data => {
+        
+    //   })
+    //   .catch(error => console.error('Error fetching data:', error));
+  }
+
+    window.onload =()=>{
+
+        let currentPage = 1;
+
+            document.getElementById('logout').addEventListener('click',()=>{
+                window.location.href = 'login.html'; 
+            });
+             
+          
+
+
+
+    onPageClick(currentPage);
+
+            const form =document.querySelector("form");
+            const buton =document.querySelector("subut");
+
+            document.getElementById('itemsPerPageSelect').addEventListener('change', ()=>{
+
+                onPageClick(currentPage);
+
+            });
+
+            // renderCandyItems();
+
+
+            form.addEventListener('submit', e=>{
+                if(!form.checkValidity()){
+                    e.preventDefault()
+                }
+                form.classList.add('was-validated')
+            })
+            document.getElementById('exp-download').onclick = async function(e){
+                axios.get("http://localhost:8000/expense/download",{headers:{"Authorization":token}}).then((response)=>{
+                    if(response.status===200){
+                        var a = document.createElement("a");
+                        a.href = response.data.fileurl;
+                        a.download ="myexpense.csv"
+                        a.click();
+                    }
+                })
+            }
+            
+
+            document.getElementById('rzp-button1').onclick = async function(e){
+                const token =JSON.parse(localStorage.getItem('token'));
+                // console.log(token);
+                const response = await axios.get('http://localhost:8000/purchase/premiummembership',{headers:{"Authorization":token}});
+                console.log(response.data.key_id);
+                var options = {
+                    "key":response.data.key_id,
+                    "order_id":response.data.order.id,
+                    "handler":async function(response) {
+                     const {data} = await axios.post('http://localhost:8000/purchase/updatetransactionstatus',{
+                            order_id : options.order_id,
+                            payment_id : response.razorpay_payment_id,
+                        },{headers:{"Authorization":token}});
+
+                        // console.log("hiiiiiiiii",data);
+                        
+                        localStorage.setItem('token',JSON.stringify(data.token));
+                        location.reload();
+                        alert("You are a preimum User Now");
+                    }
+                }
+                const rzp1= new Razorpay(options);
+                rzp1.open();
+                e.preventDefault();
+
+                rzp1.on('payment.failed',function(response){
+                  const {error}=response;
+                  console.log(error.metadata.payment_id);
+                    // alert("something went wrong")
+                    axios.post('http://localhost:8000/purchase/updatetransactionFailedStatus',{
+                            order_id : error.metadata.order_id,
+                            payment_id :error.metadata.payment_id,
+                        },{headers:{"Authorization":token}}).catch((err)=>{
+                            console.log(err);
+                        })
+                })
+            }
+            const token = JSON.parse(localStorage.getItem('token'));
+            // console.log(token);
+            let tokeData = parseJwt(token);
+            console.log(tokeData);
+            document.getElementById('uname').innerHTML=tokeData.name;
+            document.getElementById('uemail').innerHTML=tokeData.email;
+            console.log();
+            if (tokeData.ispremiumuser) {
+                // const premiumText = document.getElementById('premumuser');
+                const shLeadboard = document.getElementById('leaderboard');
+                document.getElementById('usertype').innerHTML='premium user';
+                // const premiumButon = document.getElementById('rzp-button1');
+                // premiumText.style.display="block";
+                // premiumText.style.display="block";
+                shLeadboard.style.display="block";
+            }else{
+                     const premiumButon = document.getElementById('rzp-button1');
+                     premiumButon.style.display="block";
+            }
+                // axios.get('http://localhost:8000/expense',{headers:{"Authorization":token}}).then((res)=>{
+
+                //             res.data.data.forEach((expense, index) => {
+                //             // Create HTML elements to display each expense
+                //             // console.log(expense)
+                //             const parentDiv = document.getElementById('parentDiv');
+                //             const childParagraph = document.createElement('li');
+                //             childParagraph.setAttribute('data-id', expense.id);
+
+                //             childParagraph.textContent = `${expense.expense}-${expense.description}-${expense.category}`;
+                //             parentDiv.appendChild(childParagraph);
+                //             var deleteBtn = document.createElement('button');
+                //             deleteBtn.className  = 'btn btn-danger btn-sm float-right delete';
+                //             deleteBtn.appendChild(document.createTextNode('Delete'));
+
+                //             var editBtn = document.createElement('button');
+                //             editBtn.className = 'btn btn-primary btn-sm edit';
+                //             editBtn.appendChild(document.createTextNode('Edit'));
+
+                //             childParagraph.appendChild(editBtn);
+                //             childParagraph.appendChild(deleteBtn);
+                //         });
+
+                //     }).catch((err)=>{
+
+                //     console.log(err);
+                // })
+
+                // var itemList = document.getElementById('parentDiv');
+             
+
+                    // itemList.addEventListener('click', removeItem);
+
+                    // itemList.addEventListener('click', editItem);
+                 
+
+                    function removeItem(e){
+                        if(e.target.classList.contains('delete')){
+                            if(confirm('Are You Sure?')){
+                                const listItem = e.target.closest('li');
+                                 const itemId = listItem.getAttribute('data-id');
+                                 const elementToRemove = document.querySelector(`li[data-id="${itemId}"]`);
+
+                                axios.delete(`http://localhost:8000/expense/${itemId}`,{headers:{"Authorization":token}}).then((res)=>{
+                                    if(res.status==200){
+                                        elementToRemove.remove();
+                                    }
+                                    }).catch((err)=>{
+                                        console.log(err);
+                                    })
+                            }
+                        }
+                    }
+
+                 function populateInputFields(descpart) {
+                    // const userData = JSON.parse(localStorage.getItem(descpart));
+                     // console.log(userData);
+                    //  Check if data exists
+                    if (descpart) {
+                     // Populate input fields
+                        document.getElementById('expense').value = descpart.expense;
+                        document.getElementById('desc').value = descpart.description;
+                        document.getElementById('categorySelect').value=descpart.category;
+                        const editItemIdInput = document.getElementById('editItemId');
+                       editItemIdInput.value = descpart.id;
+                    }
+                }
+
+                    function editItem(e){
+                    if(e.target.classList.contains('edit')){
+                        const listItem = e.target.closest('li');
+                        const itemId = listItem.getAttribute('data-id');
+                        let edit=null;
+                        axios.get('http://localhost:8000/expense').then((res)=>{
+                            edit=res.data.data.find(data=>data.id==itemId);
+                            console.log(edit);
+                             populateInputFields(edit);
+                            }).catch((err)=>{
+
+                            console.log(err);
+                            })
+
+                      
+                        // localStorage.removeItem(parts[1]);
+                        // itemList.removeChild(list);
+                    }
+                }
+
+                
+                var leadboard = document.getElementById('leaderboard');
+             console.log(leadboard);
+                leadboard.addEventListener('click', showLeadboard);
+
+
+               
+                
+}
+
+
+        function handleSubmit(event) {
+            event.preventDefault(); 
+
+            const expense = document.getElementById('expense').value;
+            const desc = document.getElementById('desc').value;
+            const category = document.getElementById('categorySelect').value;
+            const editItemId = document.getElementById('editItemId').value;
+            console.log(editItemId);
+            let newExpense=null;
+            if(!editItemId){
+                newExpense = {
+                        expense  : expense,
+                        description : desc,
+                        category : category,
+                   }
+            }else{
+               newExpense = {
+                        id:editItemId,
+                        expense  : expense,
+                        description : desc,
+                        category : category,
+                   }
+            }
+
+            // let myUser=JSON.stringify(       newExpense)
+            // localStorage.setItem(desc,myUser);
+
+            // const userData = localStorage.getItem(desc);
+            // const parsedUserData = JSON.parse(userData);
+
+            const token = JSON.parse(localStorage.getItem('token'));    
+            // console.log("lohhhhhhh",token);
+            if(editItemId){
+
+                axios.put(`http://localhost:8000/expense`,newExpense).then((res)=>{
+
+                    if(res.status==200){
+                        edititemItem(editItemId,newExpense);
+                    }
+
+
+                }).catch((err)=>{
+                console.log(err);
+                })
+            }else{
+                
+                axios.post('http://localhost:8000/expense',newExpense, {
+                        headers: {
+                            'Authorization': `${token}`
+                        }
+                }).then((res)=>{
+                        console.log(res);
+                        if(res){
+
+                            addIteme(res.data.data);
+                          
+                        }
+
+                }).catch((err)=>{
+
+                console.log(err);
+                })
+            }
+                
+        }
+    </script>
+    <div >
+
+
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a class="navbar-brand" href="#">E-Tracker</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavDropdown">
+              <ul class="navbar-nav nbar justify-content-end" >
+                <li class="nav-item active">
+                  <a class="nav-link" href="#">Home</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#">Features</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#">Pricing</a>
+                </li>
+                <li> <button id="rzp-button1">Buy Premium</button></li>
+                <li> <button class="btn btn-danger mx-2" id="exp-download">Download Expenses</button></li>
+              </ul>
+                
+            </div>
+            <div class="logot">
+                <button id="leaderboard"  class="btn btn-primary">Show LeaderBoard</button>
+                <button id="logout" class="btn btn-danger">Logout</button>
+            </div>
+          </nav>
+
+       
+        <!-- <div id="premumuser">
+            <div class="preuser">
+                <span>Your a preimum user</span>
+                <button id="leaderboard">Show LeaderBoard</button>
+            </div> -->
+            
+        </div>
+        <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+       
+   <div class="front">
+    <div class="profilebox ">
+        <div class="profileboxInner">
+        <img src="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp" class="rounded-circle" style="width: 150px;"
+         alt="Avatar" />
+         <h5 class="mb-2"><strong id="uname">John Doe</strong></h5>
+         <h5 class="mb-2"><strong id="uemail">John@gmail.com</strong></h5>
+         <div class="premumuser">
+            <span class="fw-bold fs-5" id="usertype">user</span>
+         </div>
+        </div>
+    </div>
+    <div class="leadbox">
+        <div class="leadhead">
+            <h2>Leard Board</h2>
+        </div>
+        
+        <div class="leadboardInner">
+            <!-- <div id="user"> -->
+                <ul id="leaderboardDiv">
+        
+                </ul>
+            <!-- </div> -->
+        </div>
+    </div>
+    <form id="eform" novalidate onSubmit="handleSubmit(event)">
+
+        <div id="header">
+          <h3>Add Your Expenses</h3>
+        </div>
+           <div class="form-floating mt-3">
+             <input  type="number" id ="expense"class="form-control" placeholder="Enter desc" required>
+             <label for="expense" class="form-label">Add Expense:</label>
+           </div>
+ 
+           <div class="form-floating mt-3">
+             <input type="text" class="form-control"  id ="desc" placeholder="Enter desc" required>
+             <label for="desc" class="form-label" >Choose Description:</label>
+             <!-- <div class="invalid-feedback">Invalid desc</div> -->
+           </div>
+             
+           <div class="mt-3">
+             <select id="categorySelect" class="form-select p-3" aria-label="Default select example">
+                 <option selected>Choose a Category</option>
+                 <option value="Fuel">Fuel</option>
+                 <option value="Food">Food</option>
+                 <option value="Electricity">Electricity</option>
+                 <option value="Movie">Movie</option>
+               </select>
+           </div>
+         
+           <input type="hidden" id="editItemId" name="editItemId">
+             <!-- <div class="col-12 mt-3">
+                 <label for="fexpense"  class="form-label" >Date of expense:</label>
+                     <div class="input-group">
+                             <input type="date" id="seldate" class="form-control" expense="birthday">                    
+                             <input type="time" id="seltime" class="form-control" expense="appt">
+                     </div>  
+             </div> -->
+             
+          <input type="submit" id ="sub-button" class="subut" value="Add Expenses">
+     </form> 
+   </div>
+    <!-- <div id="user">
+        <ul id="parentDiv">
+
+        </ul>
+    </div>
+    <h1>Lead Board</h1>
+    <div id="user">
+        <ul id="leaderboardDiv">
+
+        </ul>
+    </div> -->
+    <div class="container candies-table">
+        <table class="table table-striped">
+        <thead>
+          <tr>
+            <th scope="col">id</th>
+            <th scope="col">category</th>
+            <th scope="col">Description</th>
+            <th scope="col">Price</th>
+            <th scope="col">Date</th>
+          </tr>
+        </thead>
+        <tbody>
+         
+        </tbody>
+        </table>
+        <div class="pagin">
+             
+           <div class="mt-3">
+            <select id="itemsPerPageSelect" class="form-select itemsPerpage" aria-label="Default select example">
+                <!-- <option selected>Choose a Category</option> -->
+                <option selected value="2">2</option>
+                <option value="4">4</option>
+                <option value="6">6</option>
+              </select>
+          </div>
+            <ul id="pagination" class="pagination"></ul>
+        </div>
+   
+    </div>
+</div>
+</body>
+</html>
