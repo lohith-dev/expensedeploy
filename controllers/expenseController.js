@@ -6,10 +6,11 @@ const AWS = require('aws-sdk');
 const fileModel = require('../model/FilesDownloaded.js');
 
 
-async function fetchDataFromDatabase(offset, limit) {
+async function fetchDataFromDatabase(offset, limit,id) {
     const result = await expenseModel.findAll({
       offset,
       limit,
+      where:{userId:id}
     });
   
     return result;
@@ -18,6 +19,7 @@ async function fetchDataFromDatabase(offset, limit) {
 const getappntdata = async (req,res)=>{
      try{
         let {id}=req.user;
+        console.log(id);
         const page = parseInt(req.query.page) || 1;
         console.log("page",req.query.page);
         const itemsPerPage = parseInt(req.query.itemsPerPage) || 2;
@@ -27,9 +29,11 @@ const getappntdata = async (req,res)=>{
      
         const offset = (page - 1) * itemsPerPage;
 
-        const totalItemCount = await expenseModel.count();
+        const totalItemCount = await expenseModel.count({
+            where: { userId:id } // Filtering by userId
+          });
 
-        const data = await fetchDataFromDatabase(offset, itemsPerPage);
+        const data = await fetchDataFromDatabase(offset, itemsPerPage, id);
 
         res.status(200).json({
           success: true,
