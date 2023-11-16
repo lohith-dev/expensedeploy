@@ -8,7 +8,6 @@ const authenticate = (req, res, next) => {
         // const token = req.headers["authorization"].split(" ")[1];
         const token = req.headers['authorization'];
 
-        console.log("sddddddddddddddddddddddddddd",token);
 
         const payload = jwt.verify(token, "thisissecreateKey")
         // console.log("jjjjjjjjjjj",payload);
