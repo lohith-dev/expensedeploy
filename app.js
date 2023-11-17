@@ -38,7 +38,7 @@ app.use('/purchase', purchaseRouter);
 app.use('/leadboard', leadboardRouter);
 
 app.use((req,res)=>{
-    console.log("reqqqq");
+    // console.log("reqqqq")
     res.sendFile(path.join(__dirname,`public${req.url}`))
 })
 
