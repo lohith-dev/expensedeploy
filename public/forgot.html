@@ -145,7 +145,7 @@ function showSuccess(successMessage) {
             // }else{
                
                 try{
-                   let data= await axios.post('http://54.152.214.195:8000/password/forgotpassword',loginData);
+                   let data= await axios.post('http://35.153.102.208:8000/password/forgotpassword',loginData);
                    console.log(data);
                     if(data.status===200){
                         showSuccess(data.data.message);

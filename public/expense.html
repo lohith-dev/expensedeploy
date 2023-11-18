@@ -199,7 +199,7 @@ function parseJwt (token) {
                 const token = JSON.parse(localStorage.getItem('token'));
                     try{
 
-                        const {data} = await axios.get('http://54.152.214.195:8000/leadboard',{headers:{"Authorization":token}});
+                        const {data} = await axios.get('http://35.153.102.208:8000/leadboard',{headers:{"Authorization":token}});
                         const parentDiv = document.getElementById('leaderboardDiv');
                         parentDiv.innerHTML = '';
                         
@@ -275,7 +275,7 @@ function parseJwt (token) {
                     let candyItems;
                     const token =JSON.parse(localStorage.getItem('token'));
                         try{
-                            const {data}=await axios.get(`http://54.152.214.195:8000/expense?page=${page}&itemsPerPage=${itemsPerpage}`,{headers:{"Authorization":token}});
+                            const {data}=await axios.get(`http://35.153.102.208:8000/expense?page=${page}&itemsPerPage=${itemsPerpage}`,{headers:{"Authorization":token}});
                             console.log(data.data);
                             candyItems= data.data;
                             currentPage = page;
@@ -353,7 +353,7 @@ function onPageClick(page) {
                 form.classList.add('was-validated')
             })
             document.getElementById('exp-download').onclick = async function(e){
-                axios.get("http://54.152.214.195:8000/expense/download",{headers:{"Authorization":token}}).then((response)=>{
+                axios.get("http://35.153.102.208:8000/expense/download",{headers:{"Authorization":token}}).then((response)=>{
                     if(response.status===200){
                         var a = document.createElement("a");
                         a.href = response.data.fileurl;
@@ -367,13 +367,13 @@ function onPageClick(page) {
             document.getElementById('rzp-button1').onclick = async function(e){
                 const token =JSON.parse(localStorage.getItem('token'));
                 // console.log(token);
-                const response = await axios.get('http://54.152.214.195:8000/purchase/premiummembership',{headers:{"Authorization":token}});
+                const response = await axios.get('http://35.153.102.208:8000/purchase/premiummembership',{headers:{"Authorization":token}});
                 console.log(response.data.key_id);
                 var options = {
                     "key":response.data.key_id,
                     "order_id":response.data.order.id,
                     "handler":async function(response) {
-                     const {data} = await axios.post('http://54.152.214.195:8000/purchase/updatetransactionstatus',{
+                     const {data} = await axios.post('http://35.153.102.208:8000/purchase/updatetransactionstatus',{
                             order_id : options.order_id,
                             payment_id : response.razorpay_payment_id,
                         },{headers:{"Authorization":token}});
@@ -393,7 +393,7 @@ function onPageClick(page) {
                   const {error}=response;
                   console.log(error.metadata.payment_id);
                     // alert("something went wrong")
-                    axios.post('http://54.152.214.195:8000/purchase/updatetransactionFailedStatus',{
+                    axios.post('http://35.153.102.208:8000/purchase/updatetransactionFailedStatus',{
                             order_id : error.metadata.order_id,
                             payment_id :error.metadata.payment_id,
                         },{headers:{"Authorization":token}}).catch((err)=>{
@@ -420,7 +420,7 @@ function onPageClick(page) {
                      const premiumButon = document.getElementById('rzp-button1');
                      premiumButon.style.display="block";
             }
-                // axios.get('http://54.152.214.195:8000/expense',{headers:{"Authorization":token}}).then((res)=>{
+                // axios.get('http://35.153.102.208:8000/expense',{headers:{"Authorization":token}}).then((res)=>{
 
                 //             res.data.data.forEach((expense, index) => {
                 //             // Create HTML elements to display each expense
@@ -463,7 +463,7 @@ function onPageClick(page) {
                                  const itemId = listItem.getAttribute('data-id');
                                  const elementToRemove = document.querySelector(`li[data-id="${itemId}"]`);
 
-                                axios.delete(`http://54.152.214.195:8000/expense/${itemId}`,{headers:{"Authorization":token}}).then((res)=>{
+                                axios.delete(`http://35.153.102.208:8000/expense/${itemId}`,{headers:{"Authorization":token}}).then((res)=>{
                                     if(res.status==200){
                                         elementToRemove.remove();
                                     }
@@ -493,7 +493,7 @@ function onPageClick(page) {
                         const listItem = e.target.closest('li');
                         const itemId = listItem.getAttribute('data-id');
                         let edit=null;
-                        axios.get('http://54.152.214.195:8000/expense').then((res)=>{
+                        axios.get('http://35.153.102.208:8000/expense').then((res)=>{
                             edit=res.data.data.find(data=>data.id==itemId);
                             console.log(edit);
                              populateInputFields(edit);
@@ -553,7 +553,7 @@ function onPageClick(page) {
             // console.log("lohhhhhhh",token);
             if(editItemId){
 
-                axios.put(`http://54.152.214.195:8000/expense`,newExpense).then((res)=>{
+                axios.put(`http://35.153.102.208:8000/expense`,newExpense).then((res)=>{
 
                     if(res.status==200){
                         edititemItem(editItemId,newExpense);
@@ -565,7 +565,7 @@ function onPageClick(page) {
                 })
             }else{
                 
-                axios.post('http://54.152.214.195:8000/expense',newExpense, {
+                axios.post('http://35.153.102.208:8000/expense',newExpense, {
                         headers: {
                             'Authorization': `${token}`
                         }
